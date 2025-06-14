@@ -1,0 +1,137 @@
+body {
+    background: #f7f9fb;
+    font-family: 'Inter', Arial, sans-serif;
+    margin: 0;
+    min-height: 100vh;
+    color: #2d3a4b;
+}
+
+/* --- Athenify-inspired color scheme and layout --- */
+.navbar, .athenify-navbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    height: 60px;
+}
+.athenify-navbar .site-title {
+    font-size: 1.35em;
+    font-weight: 600;
+    color: #2d3a4b;
+    letter-spacing: 1px;
+}
+.athenify-navbar .top-btn {
+    background: #eef2ff;
+    color: #3b5bdb;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 18px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.athenify-navbar .top-btn:hover {
+    background: #dbeafe;
+}
+
+.app-layout {
+    display: flex;
+    max-width: 1200px;
+    margin: 90px auto 0 auto;
+    min-height: 80vh;
+}
+.sidebar-nav {
+    min-width: 210px;
+    max-width: 240px;
+    background: #f1f5fa;
+    border-radius: 18px;
+    box-shadow: 0 2px 12px rgba(44,62,80,0.06);
+    margin-right: 32px;
+    padding: 24px 0 18px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.sidebar-nav .nav-btn {
+    background: none;
+    color: #3b5bdb;
+    border: none;
+    padding: 14px 24px 14px 32px;
+    font-size: 1.08em;
+    font-weight: 600;
+    cursor: pointer;
+    border-left: 4px solid transparent;
+    border-radius: 0 12px 12px 0;
+    text-align: left;
+    transition: background 0.2s, border 0.2s, color 0.2s;
+    margin-bottom: 2px;
+    letter-spacing: 0.2px;
+}
+.sidebar-nav .nav-btn.active,
+.sidebar-nav .nav-btn:hover {
+    background: #e0e7ff;
+    color: #1e40af;
+    border-left: 4px solid #3b5bdb;
+}
+
+.main-content-area {
+    flex: 1;
+    padding: 32px 40px 32px 40px;
+    min-width: 0;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 2px 12px rgba(44,62,80,0.06);
+}
+
+.tab-content {
+    margin-top: 0;
+    padding: 0;
+    letter-spacing: 0.2px;
+    line-height: 1.7;
+}
+
+button, .goal-btn, .clear-btn, #main-search-btn, .top-btn, .show-all-btn, .copy-btn {
+    background: #3b5bdb;
+    color: #fff !important;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-family: 'Inter', Arial, sans-serif;
+}
+button:hover, .goal-btn:hover, .clear-btn:hover, #main-search-btn:hover, .top-btn:hover, .show-all-btn:hover, .copy-btn:hover {
+    background: #1e40af;
+}
+
+input[type="text"], input[type="number"], textarea, select {
+    background: #f1f5fa;
+    color: #2d3a4b;
+    border: 1.5px solid #b0c4de;
+    border-radius: 6px;
+    padding: 8px;
+    font-size: 1rem;
+    font-family: 'Inter', Arial, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #1e293b;
+    font-family: 'Inter', Arial, sans-serif;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    background: #e0e7ff;
+}
+::-webkit-scrollbar-thumb {
+    background: #b0c4de;
+    border-radius: 8px;
+}
+
+/* Remove old dark theme and conflicting rules */

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JEE Main & Advanced Formulas</title>
+    <link href="https://fonts.googleapis.com/css?family=Inter:400,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background: #f7f9fb;
+            font-family: 'Inter', Arial, sans-serif;
+            margin: 0;
+            min-height: 100vh;
+        }
+        .athenify-navbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            height: 60px;
+        }
+        .athenify-navbar .site-title {
+            font-size: 1.35em;
+            font-weight: 600;
+            color: #2d3a4b;
+            letter-spacing: 1px;
+        }
+        .athenify-navbar .top-btn {
+            background: #eef2ff;
+            color: #3b5bdb;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 18px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .athenify-navbar .top-btn:hover {
+            background: #dbeafe;
+        }
+        .athenify-container {
+            max-width: 720px;
+            margin: 90px auto 32px auto;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 6px 32px rgba(44,62,80,0.08);
+            padding: 36px 28px 32px 28px;
+        }
+        .formula-section h1 {
+            color: #2d3a4b;
+            font-size: 2em;
+            margin-bottom: 18px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .search-sort-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            align-items: center;
+        }
+        .search-sort-row input, .search-sort-row select {
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 1.08em;
+            border: none;
+        }
+        .formula-list {
+            background: #f7faff;
+            border-radius: 14px;
+            box-shadow: 0 2px 12px rgba(44,62,80,0.06);
+            padding: 18px 22px;
+            margin-bottom: 22px;
+            max-height: 320px;
+            overflow-y: auto;
+        }
+        .formula-list h2 {
+            color: #3b5bdb;
+            font-size: 1.12em;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        .formula-list ul {
+            padding-left: 18px;
+        }
+        .formula-list li {
+            margin-bottom: 8px;
+            font-size: 1.07em;
+            display: flex;
+            align-items: center;
+        }
+        .copy-btn {
+            margin-left: 10px;
+            font-size: 0.93em;
+            padding: 2px 12px;
+            border-radius: 6px;
+            border: none;
+            background: #e0e7ff;
+            color: #3b5bdb;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .copy-btn:hover {
+            background: #b6ccfe;
+        }
+        #ai-search-engine {
+            margin-top: 36px;
+            background: #f7faff;
+            border-radius: 14px;
+            box-shadow: 0 2px 12px rgba(44,62,80,0.06);
+            padding: 22px 20px 16px 20px;
+        }
+        #ai-search-engine h2 {
+            color: #2d3a4b;
+            font-size: 1.13em;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        #ai-search-input {
+            width: 70%;
+            padding: 8px 14px;
+            border-radius: 18px;
+            border: 1px solid #e0e7ef;
+            font-size: 1em;
+            outline: none;
+        }
+        #ai-search-btn {
+            margin-left: 8px;
+            background: #3b5bdb;
+            color: #fff;
+            border: none;
+            border-radius: 18px;
+            padding: 8px 18px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        #ai-search-btn:hover {
+            background: #274690;
+        }
+        #ai-search-result {
+            background: #f1f8ff;
+            border-radius: 8px;
+            margin-top: 12px;
+            padding: 12px 16px;
+            min-height: 40px;
+            display: none;
+        }
+        @media (max-width: 700px) {
+            .athenify-container { padding: 16px 4vw; margin-top: 70px; }
+            .athenify-navbar { padding: 0 10px; }
+        }
+        @media (max-width: 500px) {
+            .filter-bar { flex-direction: column; gap: 8px; padding: 10px 6px; }
+            #ai-search-input { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="athenify-navbar">
+        <span class="site-title">JEE Formula Sheet</span>
+        <button onclick="window.location.href='index.html'" class="top-btn">Home</button>
+    </div>
+    <div class="athenify-container">
+        <div class="formula-section">
+            <h1>JEE Mains & Advanced Formulas</h1>
+            <div class="search-sort-row" style="display:flex;gap:12px;margin-bottom:24px;align-items:center;">
+                <input id="formula-search" type="text" placeholder="Search formula or keyword..." style="flex:2;padding:8px 12px;border-radius:8px;font-size:1.08em;border:none;">
+                <select id="chapter-select" style="flex:1;padding:8px 12px;border-radius:8px;font-size:1.08em;border:none;"></select>
+            </div>
+            <div id="formulas-area"></div>
+        </div>
+    </div>
+    <script>
+// --- Load formulas from JSON file ---
+let FORMULAS = [];
+async function loadFormulas() {
+    try {
+        const res = await fetch('formulas.json');
+        FORMULAS = await res.json();
+        renderFormulas();
+        populateChapters();
+    } catch (e) {
+        document.getElementById('formulas-area').innerHTML = '<div style="color:#b3001b;">Failed to load formulas.</div>';
+    }
+}
+function populateChapters() {
+    const chapterSet = new Set(FORMULAS.map(f => f.chapter));
+    const chapterSelect = document.getElementById('chapter-select');
+    chapterSelect.innerHTML = '<option value="all">All Chapters</option>' +
+        Array.from(chapterSet).map(ch => `<option value="${ch}">${ch}</option>`).join('');
+}
+function renderFormulas() {
+    const area = document.getElementById('formulas-area');
+    const search = document.getElementById('formula-search').value.toLowerCase();
+    const chapter = document.getElementById('chapter-select').value;
+    let filtered = FORMULAS.filter(f =>
+        (chapter === 'all' || f.chapter === chapter) &&
+        (f.title.toLowerCase().includes(search) || f.content.toLowerCase().includes(search) || f.chapter.toLowerCase().includes(search))
+    );
+    // Group by chapter
+    let grouped = {};
+    filtered.forEach(f => {
+        if (!grouped[f.chapter]) grouped[f.chapter] = [];
+        grouped[f.chapter].push(f);
+    });
+    area.innerHTML = Object.keys(grouped).length === 0 ? '<div style="color:#bdbdbd;">No formulas found.</div>' :
+        Object.entries(grouped).map(([ch, list]) =>
+            `<div class='chapter-section'><div class='chapter-title' style='color:#b3001b;font-size:1.18em;margin-bottom:10px;'>${ch}</div><ul class='formula-list' style='list-style:none;padding:0;'>` +
+            list.map(f => `<li class='formula-item' style='background:#18181b;margin-bottom:10px;border-radius:8px;padding:12px 16px;box-shadow:0 2px 8px #b3001b22;'><div class='formula-title' style='font-weight:600;color:#b3001b;'>${f.title}</div><div class='formula-content' style='margin-top:4px;color:#f3f3f3;font-size:1.04em;'>${f.content}</div></li>`).join('') +
+            '</ul></div>'
+        ).join('');
+}
+document.getElementById('formula-search').addEventListener('input', renderFormulas);
+document.getElementById('chapter-select').addEventListener('change', renderFormulas);
+loadFormulas();
+
+        // --- Advanced Internet Search Engine (AI-like) ---
+        const aiInput = document.getElementById('ai-search-input');
+        const aiBtn = document.getElementById('ai-search-btn');
+        const aiResult = document.getElementById('ai-search-result');
+
+        // Use Google Custom Search API (or Bing, or DuckDuckGo) for demo, open a new tab with results.
+        // For a real AI answer, backend integration with OpenAI/Bing API is needed.
+        aiBtn.onclick = function() {
+            const q = aiInput.value.trim();
+            if (!q) {
+                aiResult.style.display = "block";
+                aiResult.innerHTML = "<em>Please enter your question or formula.</em>";
+                return;
+            }
+            aiResult.style.display = "block";
+            aiResult.innerHTML = "Searching the web and summarizing best answer for: <b>" + q + "</b> ...";
+            // Open Google search in new tab for now
+            window.open("https://www.google.com/search?q=" + encodeURIComponent(q + " jee formula answer"), "_blank");
+            // Simulate AI summary (for demo)
+            setTimeout(() => {
+                aiResult.innerHTML = "Here are the best resources for your query. <br><em>(For direct AI answers, connect this tool to an AI API like OpenAI or Bing.)</em>";
+            }, 2000);
+        };
+        aiInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') aiBtn.click();
+        });
+    </script>
+</body>
+</html>

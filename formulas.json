@@ -1,0 +1,8 @@
+[
+  { "chapter": "Physics - Kinematics", "title": "Equation of Motion 1", "content": "v = u + at" },
+  { "chapter": "Physics - Kinematics", "title": "Equation of Motion 2", "content": "s = ut + 1/2 at²" },
+  { "chapter": "Physics - Kinematics", "title": "Equation of Motion 3", "content": "v² = u² + 2as" },
+  { "chapter": "Physics - Laws of Motion", "title": "Newton's Second Law", "content": "F = ma" },
+  { "chapter": "Chemistry - Mole Concept", "title": "Number of Moles", "content": "n = Given mass / Molar mass" },
+  { "chapter": "Maths - Quadratic Equations", "title": "Roots of Quadratic", "content": "x = [-b ± sqrt(b²-4ac)] / 2a" }
+]

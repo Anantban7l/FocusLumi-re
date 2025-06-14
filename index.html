@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Study Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css?family=Inter:400,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --main-bg: #18181b;
+            --sidebar-bg: #1a1a1d;
+            --accent: #b3001b;
+            --accent-dark: #7a0013;
+            --text-main: #f3f3f3;
+            --text-muted: #bdbdbd;
+            --card-bg: #232326;
+        }
+        body {
+            background: var(--main-bg);
+            color: var(--text-main);
+        }
+        .athenify-navbar {
+            background: var(--sidebar-bg);
+        }
+        .sidebar-nav {
+            background: var(--sidebar-bg);
+        }
+        .sidebar-nav .nav-btn.active,
+        .sidebar-nav .nav-btn:hover {
+            background: var(--accent);
+            border-left: 4px solid var(--accent-dark);
+        }
+        .main-content-area {
+            background: var(--card-bg);
+        }
+        .feature-box {
+            background: var(--card-bg);
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        @media (max-width: 1000px) {
+            .app-layout { flex-direction: column; margin-top: 70px; }
+            .sidebar-nav { flex-direction: row; margin: 0 0 18px 0; min-width: 0; max-width: 100vw; }
+            .main-content-area { padding: 18px 4vw; }
+        }
+        @media (max-width: 700px) {
+            .athenify-navbar { padding: 0 10px; }
+            .main-content-area { padding: 10px 2vw; }
+        }
+    </style>
+</head>
+<body>
+    <div class="athenify-navbar">
+        <span class="site-title">Study Dashboard</span>
+        <div style="display:flex;gap:10px;">
+            <button class="top-btn" id="membership-btn">Membership</button>
+            <button class="top-btn">Login</button>
+        </div>
+    </div>
+    <div class="app-layout">
+        <nav class="sidebar-nav">
+            <button class="nav-btn active" data-tab="dashboard">Dashboard</button>
+            <button class="nav-btn" data-tab="planner">Planner</button>
+            <button class="nav-btn" data-tab="analytics">Analytics</button>
+            <button class="nav-btn" data-tab="resources">Resources</button>
+            <button class="nav-btn" data-tab="notes">Notes</button>
+            <button class="nav-btn" data-tab="settings">Settings</button>
+        </nav>
+        <div class="main-content-area">
+            <div id="dashboard-tab" class="tab-content active">
+                <h1>Welcome to Your Study Dashboard</h1>
+                <p style="color:#bdbdbd;font-size:1.15em;">Get started by selecting a section from the sidebar.</p>
+                <div class="feature-row" style="display:flex;flex-wrap:wrap;gap:24px;justify-content:center;align-items:flex-start;margin-bottom:24px;">
+                    <div id="study-time-calc-link" class="feature-box" style="margin-bottom:0;background:#232326;border-radius:14px;padding:18px 16px;min-width:260px;max-width:370px;">
+                        <h2 style="color:#b3001b;margin-top:0;">Study Session Timer</h2>
+                        <p style="color:#bdbdbd;margin-bottom:10px;">Track your focused study sessions with a timer. Click below to begin!</p>
+                        <a href="timer.html" target="_blank"><button id="go-to-sessions-btn" class="goal-btn" style="background:#b3001b;color:#fff;padding:10px 22px;border-radius:8px;font-size:1.1em;">Open Study Timer</button></a>
+                    </div>
+                    <div id="work-time-calc" class="feature-box" style="background:var(--card-bg);border-radius:14px;padding:22px 20px;min-width:260px;max-width:370px;box-shadow:0 2px 12px #b3001b22;">
+                        <h2 style="color:var(--accent);margin-top:0;margin-bottom:10px;font-size:1.18em;letter-spacing:0.5px;">Work Time Calculator</h2>
+                        <div id="wtc-topic-list" style="margin-bottom:14px;"></div>
+                        <div style="display:flex;gap:10px;margin-bottom:18px;align-items:center;">
+                            <input id="wtc-topic-name" type="text" placeholder="Task/Subject name" style="flex:2;padding:8px 10px;border-radius:6px;font-size:1em;background:var(--main-bg);color:var(--text-main);border:1px solid var(--accent);">
+                            <input id="wtc-topic-mins" type="number" min="1" placeholder="Minutes" style="width:90px;padding:8px 10px;border-radius:6px;font-size:1em;background:var(--main-bg);color:var(--text-main);border:1px solid var(--accent);">
+                            <button id="wtc-add-btn" class="goal-btn" style="background:var(--accent);color:#fff;">Add</button>
+                        </div>
+                        <div id="wtc-summary" style="margin-top:10px;color:var(--accent);font-size:1.05em;"></div>
+                        <div id="wtc-plan" style="margin-top:8px;color:var(--text-main);font-size:0.98em;"></div>
+                    </div>
+                </div>
+                <div class="feature-row" style="display:flex;flex-wrap:wrap;gap:24px;justify-content:center;align-items:flex-start;margin-bottom:24px;">
+                    <div id="dashboard-dates-area" class="feature-box" style="max-width:340px;background:#232326;border-radius:14px;padding:18px 16px;"></div>
+                </div>
+            </div>
+            <div id="planner-tab" class="tab-content">
+                <h1>Study Planner</h1>
+                <div class="feature-row" style="display:flex;flex-wrap:wrap;gap:24px;justify-content:center;align-items:flex-start;margin-bottom:24px;">
+                    <div id="planner-goal-area" class="feature-box" style="background:#232326;border-radius:14px;padding:18px 16px;min-width:260px;max-width:370px;">
+                        <h2 style="color:#b3001b;font-size:1.08em;margin:0 0 10px 0;text-align:center;">Study Goal</h2>
+                        <form id="study-goal-form" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center;">
+                            <input id="goal-date" type="date" style="padding:6px 8px;border-radius:6px;font-size:1em;">
+                            <input id="goal-hours" type="number" min="1" placeholder="Total Hours" style="padding:6px 8px;border-radius:6px;font-size:1em;max-width:120px;">
+                            <button class="goal-btn" style="font-size:0.98em;padding:7px 14px;background:#b3001b;color:#fff;">Set Goal</button>
+                        </form>
+                        <div id="goal-summary" style="margin-top:10px;color:#b3001b;"></div>
+                    </div>
+                    <div id="planner-calendar-area" class="feature-box" style="background:#232326;border-radius:14px;padding:18px 16px;min-width:260px;max-width:370px;">
+                        <h2 style="color:#b3001b;font-size:1.08em;margin:0 0 10px 0;text-align:center;">Important Dates</h2>
+                        <form id="calendar-form" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center;">
+                            <input id="calendar-date" type="date" style="padding:6px 8px;border-radius:6px;font-size:1em;">
+                            <input id="calendar-title" type="text" placeholder="Title (e.g. Exam)" style="padding:6px 8px;border-radius:6px;font-size:1em;max-width:120px;">
+                            <button class="goal-btn" style="font-size:0.98em;padding:7px 14px;background:#b3001b;color:#fff;">Add</button>
+                        </form>
+                        <ul id="calendar-list" style="margin:10px 0 0 0;padding:0;list-style:none;font-size:0.98em;"></ul>
+                    </div>
+                    <div id="planner-packed-area" class="feature-box" style="background:#232326;border-radius:14px;padding:18px 16px;min-width:260px;max-width:370px;">
+                        <h2 style="color:#b3001b;font-size:1.18em;margin:0 0 12px 0;text-align:center;">Quick Planner</h2>
+                        <div style="display:flex;gap:8px;margin-bottom:10px;">
+                            <input id="planner-input" type="text" placeholder="Add a new task..." style="flex:1;height:2.2em;font-size:1em;padding:8px 10px;border-radius:8px;">
+                            <button id="planner-add-btn" class="goal-btn" style="font-size:1em;padding:7px 16px;background:#b3001b;color:#fff;">Add</button>
+                        </div>
+                        <ul id="planner-list" style="margin:0 0 10px 0;padding:0;list-style:none;"></ul>
+                        <button id="planner-popup-btn" class="goal-btn" style="width:100%;background:#7a0013;font-size:0.98em;">Pop Up Task</button>
+                        <div id="planner-ai-box" style="background:#18181b;border-radius:10px;padding:10px 8px;max-width:380px;margin:16px auto 0 auto;box-shadow:0 2px 8px #b3001b22;">
+                            <div id="planner-ai-messages" style="min-height:36px;margin-bottom:8px;font-size:0.98em;"></div>
+                            <div style="display:flex;gap:6px;">
+                                <input id="planner-ai-user-input" type="text" placeholder="Ask AI for a schedule..." style="flex:1;padding:7px 8px;border-radius:6px;border:none;font-size:1em;background:#232326;color:#fff;">
+                                <button id="planner-ai-send-btn" class="goal-btn" style="background:#b3001b;font-size:0.98em;">Ask AI</button>
+                            </div>
+                            <div id="planner-ai-suggested-tasks" style="margin-top:6px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="analytics-tab" class="tab-content">
+                <h1>Analytics</h1>
+                <div class="feature-row" style="display:flex;flex-wrap:wrap;gap:24px;justify-content:center;align-items:flex-start;margin-bottom:24px;">
+                    <div id="analytics-content" class="feature-box" style="text-align:center; color:#b3001b; font-size:1.12em; background:#232326; border-radius:14px; padding:18px 16px; min-width:260px; max-width:370px;">
+                        This feature is not open for everyone.<br>
+                        <span style="color:#bdbdbd;font-size:0.98em;">(Analytics access is currently restricted.)</span>
+                    </div>
+                </div>
+            </div>
+            <div id="resources-tab" class="tab-content">
+                <h1>Resources</h1>
+                <div class="feature-row" style="display:flex;flex-wrap:wrap;gap:24px;justify-content:center;align-items:flex-start;margin-bottom:24px;">
+                    <div class="feature-box" style="width:100%;align-items:flex-start;text-align:left;background:#232326;border-radius:14px;padding:18px 16px;">
+                        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;justify-content:flex-start;">
+                            <input id="resources-search" type="text" placeholder="Search by title..." style="flex:1;max-width:180px;padding:7px 10px;border-radius:7px;font-size:1em;min-width:0;">
+                            <button id="open-jee-links-btn" class="goal-btn" style="background:#7a0013;font-size:0.98em;">JEE Links</button>
+                        </div>
+                        <ul id="resources-list" style="text-align:left;padding-left:0;"></ul>
+                        <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;justify-content:flex-start;">
+                            <input id="resources-title" type="text" placeholder="Title (e.g. Wikipedia - Physics)" style="flex:1;max-width:180px;padding:7px 10px;border-radius:7px;font-size:1em;min-width:0;">
+                            <input id="resources-input" type="text" placeholder="Paste resource link..." style="flex:2;min-width:120px;padding:7px 10px;border-radius:7px;font-size:1em;min-width:0;">
+                            <button id="resources-add-btn" class="goal-btn" style="background:#b3001b;color:#fff;">Add</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="notes-tab" class="tab-content">
+                <h1>Notes</h1>
+                <div class="feature-row" style="display:flex;flex-wrap:wrap;gap:24px;justify-content:center;align-items:flex-start;margin-bottom:24px;">
+                    <div class="feature-box" style="width:100%;background:#232326;border-radius:14px;padding:18px 16px;">
+                        <textarea id="notes-area" rows="8" style="width:100%;background:#222;color:#fff;border-radius:8px;padding:12px;"></textarea>
+                        <button id="notes-save-btn" class="goal-btn" style="margin-top:10px;background:#b3001b;color:#fff;">Save Note</button>
+                        <span id="notes-status" style="margin-left:12px;color:#b3001b;"></span>
+                    </div>
+                </div>
+            </div>
+            <div id="settings-tab" class="tab-content">
+                <h1>Settings</h1>
+                <div class="feature-row" style="display:flex;flex-wrap:wrap;gap:24px;justify-content:center;align-items:flex-start;margin-bottom:24px;">
+                    <div class="feature-box" style="width:100%;max-width:420px;margin:auto;text-align:center;background:#232326;border-radius:14px;padding:18px 16px;">
+                        <h2 style="color:#b3001b;margin-top:0;">Color Theme</h2>
+                        <p style="color:#bdbdbd;margin-bottom:18px;">Choose your favorite look for the dashboard:</p>
+                        <div id="theme-presets" style="display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-bottom:10px;"></div>
+                        <div id="theme-preview" style="margin-top:10px;"></div>
+                    </div>
+                </div>
+                <div id="gold-features" style="margin:32px auto 0 auto;max-width:480px;background:var(--card-bg);border-radius:14px;padding:22px 18px 18px 18px;box-shadow:0 2px 12px #ffd70033;">
+                    <h2 style="color:#ffd700;margin-top:0;margin-bottom:10px;font-size:1.18em;letter-spacing:0.5px;display:flex;align-items:center;gap:10px;">
+                        <span style="font-size:1.2em;">&#11088;</span> Gold Member Features <span style="background:#ffd700;color:#232326;font-weight:700;padding:2px 10px;border-radius:8px;font-size:0.85em;margin-left:8px;">Gold Only</span>
+                    </h2>
+                    <ul style="color:var(--text-main);font-size:1.08em;list-style:none;padding-left:0;">
+                        <li style="margin-bottom:10px;"><span style="color:#ffd700;">&#128081;</span> Focus Mode (distraction-free study)</li>
+                        <li style="margin-bottom:10px;"><span style="color:#ffd700;">&#128200;</span> Session Analytics (charts & stats)</li>
+                        <li style="margin-bottom:10px;"><span style="color:#ffd700;">&#128161;</span> Motivational Quotes on session start</li>
+                        <li style="margin-bottom:10px;"><span style="color:#ffd700;">&#128266;</span> Premium Timer Sounds</li>
+                        <li style="margin-bottom:10px;"><span style="color:#ffd700;">&#128190;</span> Export Study Data (CSV/Excel)</li>
+                        <li style="margin-bottom:10px;"><span style="color:#ffd700;">&#128170;</span> Daily/Weekly Goals & Progress Bars</li>
+                        <li style="margin-bottom:10px;"><span style="color:#ffd700;">&#128222;</span> Priority Support</li>
+                    </ul>
+                    <div id="focus-mode-section" style="margin-top:18px;text-align:center;display:none;">
+                        <button id="focus-mode-btn" class="goal-btn" style="background:#ffd700;color:#232326;font-weight:700;font-size:1.08em;padding:10px 24px;">Enter Focus Mode</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="membership-modal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#000a;z-index:9999;align-items:center;justify-content:center;">
+        <div style="background:#232326;padding:32px 28px 22px 28px;border-radius:16px;box-shadow:0 4px 32px #0008;max-width:340px;width:90vw;text-align:center;">
+            <h2 style="color:#b3001b;margin-top:0;">Membership Access</h2>
+            <p style="color:#bdbdbd;margin-bottom:18px;">Enter your membership code to unlock exclusive features.</p>
+            <input id="membership-code-input" type="password" placeholder="Membership code" style="width:90%;padding:8px 10px;border-radius:7px;font-size:1em;margin-bottom:12px;">
+            <div id="membership-error" style="color:#b3001b;min-height:18px;font-size:0.98em;margin-bottom:8px;"></div>
+            <button id="membership-submit-btn" class="goal-btn" style="width:100%;margin-bottom:8px;">Unlock</button>
+            <button id="membership-view-plans-btn" class="goal-btn" style="width:100%;background:var(--accent);margin-bottom:8px;">View Membership Plans</button>
+            <button id="membership-cancel-btn" class="goal-btn alt" style="width:100%;background:#7a0013;">Cancel</button>
+        </div>
+    </div>
+    <div id="gold-analytics-tab" class="tab-content" style="display:none;">
+        <h1 style="color:#ffd700;">Gold Session Analytics</h1>
+        <div style="background:var(--card-bg);border-radius:14px;padding:22px 18px 18px 18px;box-shadow:0 2px 12px #ffd70033;max-width:600px;margin:32px auto;text-align:center;">
+            <p style="color:var(--text-main);font-size:1.15em;">Unlock detailed charts and stats about your study sessions, streaks, and more! (Coming soon for Gold members.)</p>
+            <div style="margin-top:24px;color:#ffd700;font-size:2em;">&#128200;</div>
+        </div>
+    </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+    // Tab switching logic
+    const tabBtns = document.querySelectorAll('.sidebar-nav .nav-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            tabBtns.forEach(b => b.classList.remove('active'));
+            tabContents.forEach(tc => tc.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById(btn.dataset.tab + '-tab').classList.add('active');
+        });
+    });
+
+    // --- Work Time Calculator ---
+    (function(){
+        const topicListDiv = document.getElementById('wtc-topic-list');
+        const topicNameInput = document.getElementById('wtc-topic-name');
+        const topicMinsInput = document.getElementById('wtc-topic-mins');
+        const addBtn = document.getElementById('wtc-add-btn');
+        const summaryDiv = document.getElementById('wtc-summary');
+        const planDiv = document.getElementById('wtc-plan');
+        let topics = JSON.parse(localStorage.getItem('wtcTopics')||'[]');
+        function renderTopics() {
+            topicListDiv.innerHTML = topics.length ? topics.map((t,i)=>`<div style='margin-bottom:6px;'><b>${t.name}</b>: ${t.mins} min <button style='margin-left:10px;background:var(--accent-dark);color:var(--text-main);border:none;border-radius:5px;padding:2px 8px;cursor:pointer;' onclick='window.removeWtcTopic(${i})'>Delete</button></div>`).join('') : "<span style='color:var(--text-muted);'>No tasks added.</span>";
+            let total = topics.reduce((sum,t)=>sum+parseInt(t.mins),0);
+            summaryDiv.innerHTML = topics.length ? `Total: <b>${total} min</b> (${(total/60).toFixed(2)} hours)` : '';
+            planDiv.innerHTML = topics.length ? `Plan: ${topics.map(t=>`${t.name} (${t.mins}m)`).join(' → ')}` : '';
+        }
+        window.removeWtcTopic = function(i) {
+            topics.splice(i,1);
+            localStorage.setItem('wtcTopics',JSON.stringify(topics));
+            renderTopics();
+        };
+        addBtn.onclick = function() {
+            const name = topicNameInput.value.trim();
+            const mins = parseInt(topicMinsInput.value);
+            if(!name || !mins || mins<=0) return;
+            topics.push({name, mins});
+            localStorage.setItem('wtcTopics',JSON.stringify(topics));
+            topicNameInput.value = '';
+            topicMinsInput.value = '';
+            renderTopics();
+        };
+        renderTopics();
+    })();
+
+    // --- Planner: Study Goal ---
+    (function(){
+        const studyGoalForm = document.getElementById('study-goal-form');
+        const goalDateInput = document.getElementById('goal-date');
+        const goalHoursInput = document.getElementById('goal-hours');
+        const goalSummary = document.getElementById('goal-summary');
+        function loadStudyGoal() {
+            const goal = JSON.parse(localStorage.getItem('studyGoal')||'null');
+            if (goal) {
+                goalDateInput.value = goal.date;
+                goalHoursInput.value = goal.hours;
+                goalSummary.innerHTML = `Goal: <b>${goal.hours} hours</b> by <b>${goal.date}</b>`;
+            } else {
+                goalSummary.innerHTML = '<span style="color:#bdbdbd;">No study goal set.</span>';
+            }
+        }
+        studyGoalForm.onsubmit = function(e) {
+            e.preventDefault();
+            const date = goalDateInput.value;
+            const hours = parseInt(goalHoursInput.value);
+            if (!date || !hours || hours <= 0) {
+                goalSummary.innerHTML = '<span style="color:#b3001b;">Please enter a valid date and total hours.</span>';
+                return;
+            }
+            localStorage.setItem('studyGoal', JSON.stringify({date, hours}));
+            loadStudyGoal();
+        };
+        loadStudyGoal();
+    })();
+
+    // --- Planner: Calendar ---
+    (function(){
+        const calendarForm = document.getElementById('calendar-form');
+        const calendarDate = document.getElementById('calendar-date');
+        const calendarTitle = document.getElementById('calendar-title');
+        const calendarList = document.getElementById('calendar-list');
+        let calendarDates = JSON.parse(localStorage.getItem('calendarDates')||'[]');
+        function renderCalendar() {
+            calendarList.innerHTML = calendarDates.length ? calendarDates.map((d,i)=>`<li><b>${d.title}</b> - ${d.date} <button style='margin-left:10px;background:#7a0013;color:#fff;border:none;border-radius:5px;padding:2px 8px;cursor:pointer;' onclick='window.removeCalendarDate(${i})'>Delete</button></li>`).join('') : "<span style='color:#bdbdbd;'>No dates added.</span>";
+        }
+        window.removeCalendarDate = function(i) {
+            calendarDates.splice(i,1);
+            localStorage.setItem('calendarDates',JSON.stringify(calendarDates));
+            renderCalendar();
+        };
+        if(calendarForm) {
+            calendarForm.onsubmit = function(e) {
+                e.preventDefault();
+                const date = calendarDate.value;
+                const title = calendarTitle.value.trim();
+                if(!date || !title) return;
+                calendarDates.push({date, title});
+                localStorage.setItem('calendarDates',JSON.stringify(calendarDates));
+                calendarDate.value = '';
+                calendarTitle.value = '';
+                renderCalendar();
+            };
+        }
+        renderCalendar();
+    })();
+
+    // --- Planner: Quick Planner ---
+    (function(){
+        const plannerList = document.getElementById('planner-list');
+        const plannerInput = document.getElementById('planner-input');
+        const plannerAddBtn = document.getElementById('planner-add-btn');
+        const plannerPopupBtn = document.getElementById('planner-popup-btn');
+        let plannerTasks = JSON.parse(localStorage.getItem('plannerTasks')||'[]');
+        function renderPlanner() {
+            plannerList.innerHTML = '';
+            plannerTasks.forEach((task,i) => {
+                const li = document.createElement('li');
+                li.textContent = task;
+                li.style.marginBottom = '6px';
+                const del = document.createElement('button');
+                del.textContent = 'Delete';
+                del.className = 'goal-btn';
+                del.style.background = 'var(--accent-dark)';
+                del.style.color = 'var(--text-main)';
+                del.style.marginLeft = '12px';
+                del.onclick = () => {
+                    plannerTasks.splice(i,1);
+                    localStorage.setItem('plannerTasks',JSON.stringify(plannerTasks));
+                    renderPlanner();
+                };
+                li.appendChild(del);
+                plannerList.appendChild(li);
+            });
+        }
+        plannerAddBtn.onclick = function() {
+            const val = plannerInput.value.trim();
+            if(val) {
+                if(confirm('Are you sure you want to add this task? It will pop up again and again as a reminder while you study.')) {
+                    plannerTasks.push(val);
+                    localStorage.setItem('plannerTasks',JSON.stringify(plannerTasks));
+                    plannerInput.value = '';
+                    renderPlanner();
+                }
+            }
+        };
+        plannerPopupBtn.onclick = function() {
+            if(plannerTasks.length === 0) {
+                alert('No tasks to pop up!');
+                return;
+            }
+            showRandomPlannerTask();
+        };
+        function showRandomPlannerTask() {
+            if(plannerTasks.length === 0) return;
+            const task = plannerTasks[Math.floor(Math.random()*plannerTasks.length)];
+            const floatDiv = document.createElement('div');
+            floatDiv.textContent = task;
+            floatDiv.style.position = 'fixed';
+            floatDiv.style.left = (10 + Math.random()*60) + 'vw';
+            floatDiv.style.top = (10 + Math.random()*60) + 'vh';
+            floatDiv.style.background = 'var(--accent)';
+            floatDiv.style.color = 'var(--text-main)';
+            floatDiv.style.padding = '10px 22px';
+            floatDiv.style.fontSize = '1.05em';
+            floatDiv.style.borderRadius = '12px';
+            floatDiv.style.boxShadow = '0 4px 24px #0008';
+            floatDiv.style.zIndex = 9999;
+            floatDiv.style.opacity = 0.95;
+            floatDiv.style.pointerEvents = 'none';
+            const angle = (Math.random() * 50 - 25).toFixed(1);
+            floatDiv.style.transform = `rotate(${angle}deg)`;
+            floatDiv.style.transition = 'transform 1.2s cubic-bezier(.4,2,.6,1), opacity 0.8s';
+            document.body.appendChild(floatDiv);
+            setTimeout(()=>{
+                floatDiv.style.transform = `rotate(${angle}deg) translateY(-40px) scale(1.08)`;
+                floatDiv.style.opacity = 0.2;
+            }, 1200);
+            setTimeout(()=>{
+                floatDiv.remove();
+            }, 2500);
+        }
+        setInterval(() => {
+            const plannerTab = document.getElementById('planner-tab');
+            if (plannerTab && plannerTab.classList.contains('active')) {
+                showRandomPlannerTask();
+            }
+        }, 1200000);
+        renderPlanner();
+    })();
+
+    // --- Planner: AI Suggestions (placeholder, requires backend/AI integration) ---
+    // You can add your AI integration here for planner-ai-send-btn
+
+    // --- Resources Tab logic ---
+    (function(){
+        const resourcesList = document.getElementById('resources-list');
+        const resourcesInput = document.getElementById('resources-input');
+        const resourcesAddBtn = document.getElementById('resources-add-btn');
+        const resourcesTitle = document.getElementById('resources-title');
+        const resourcesSearch = document.getElementById('resources-search');
+        let resources = JSON.parse(localStorage.getItem('resourcesList')||'[]');
+        function renderResources(filter = "") {
+            resourcesList.innerHTML = '';
+            resources.filter(r => r.title.toLowerCase().includes(filter.toLowerCase())).forEach((res,i) => {
+                const li = document.createElement('li');
+                li.style.display = 'flex';
+                li.style.alignItems = 'center';
+                li.style.marginBottom = '10px';
+                li.innerHTML = `<span style='font-weight:600;color:var(--accent);font-size:1.05em;margin-right:10px;'>${res.title}</span><a href="${res.link}" target="_blank" style="color:var(--text-main);word-break:break-all;font-size:0.97em;max-width:340px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${res.link}</a>`;
+                const del = document.createElement('button');
+                del.textContent = 'Delete';
+                del.className = 'goal-btn';
+                del.style.background = 'var(--accent-dark)';
+                del.style.color = 'var(--text-main)';
+                del.style.marginLeft = '12px';
+                del.onclick = () => {
+                    resources.splice(i,1);
+                    localStorage.setItem('resourcesList',JSON.stringify(resources));
+                    renderResources(resourcesSearch.value);
+                };
+                li.appendChild(del);
+                resourcesList.appendChild(li);
+            });
+        }
+        resourcesAddBtn.onclick = function() {
+            const title = resourcesTitle.value.trim();
+            const link = resourcesInput.value.trim();
+            if(title && link) {
+                resources.push({title, link});
+                localStorage.setItem('resourcesList',JSON.stringify(resources));
+                resourcesTitle.value = '';
+                resourcesInput.value = '';
+                renderResources(resourcesSearch.value);
+            } else {
+                alert('Please enter both a title and a link.');
+            }
+        };
+        if(resourcesSearch) {
+            resourcesSearch.addEventListener('input', function() {
+                renderResources(resourcesSearch.value);
+            });
+        }
+        const openJeeLinksBtn = document.getElementById('open-jee-links-btn');
+        if (openJeeLinksBtn) {
+            openJeeLinksBtn.onclick = function() {
+                window.open('jee-links.html', '_blank');
+            };
+        }
+        renderResources();
+    })();
+
+    // --- Notes Tab logic ---
+    (function(){
+        const notesArea = document.getElementById('notes-area');
+        const notesSaveBtn = document.getElementById('notes-save-btn');
+        const notesStatus = document.getElementById('notes-status');
+        notesArea.value = localStorage.getItem('notes') || '';
+        notesSaveBtn.onclick = function() {
+            localStorage.setItem('notes', notesArea.value);
+            notesStatus.textContent = 'Saved!';
+            setTimeout(()=>{ notesStatus.textContent = ''; }, 1500);
+        };
+    })();
+
+    // --- Theme Presets Logic ---
+    (function(){
+        const themePresets = [
+            { name: "Classic Dark", vars: { '--main-bg': '#18181b', '--sidebar-bg': '#1a1a1d', '--accent': '#b3001b', '--accent-dark': '#7a0013', '--text-main': '#f3f3f3', '--text-muted': '#bdbdbd', '--card-bg': '#232326' }, member: false },
+            { name: "Midnight Blue", vars: { '--main-bg': '#101624', '--sidebar-bg': '#17203a', '--accent': '#3e8ed0', '--accent-dark': '#235a8c', '--text-main': '#eaf6ff', '--text-muted': '#b0c4de', '--card-bg': '#1a2236' }, member: false },
+            { name: "Forest Green", vars: { '--main-bg': '#16241a', '--sidebar-bg': '#1e3322', '--accent': '#3bb273', '--accent-dark': '#217a4b', '--text-main': '#eafaf1', '--text-muted': '#b7d2c2', '--card-bg': '#22382a' }, member: false },
+            { name: "Solarized", vars: { '--main-bg': '#002b36', '--sidebar-bg': '#073642', '--accent': '#b58900', '--accent-dark': '#7b6000', '--text-main': '#fdf6e3', '--text-muted': '#93a1a1', '--card-bg': '#073642' }, member: true },
+            { name: "Sunset Peach", vars: { '--main-bg': '#fff6f0', '--sidebar-bg': '#ffe0c7', '--accent': '#ff7e5f', '--accent-dark': '#b34736', '--text-main': '#2d1a10', '--text-muted': '#b97c6d', '--card-bg': '#fff0e6' }, member: true },
+            { name: "Royal Purple", vars: { '--main-bg': '#2d193c', '--sidebar-bg': '#3e2066', '--accent': '#a259f7', '--accent-dark': '#6c2eb7', '--text-main': '#f3eaff', '--text-muted': '#bda6d8', '--card-bg': '#3e2066' }, member: true },
+            { name: "Cyber Neon", vars: { '--main-bg': '#0f1021', '--sidebar-bg': '#232946', '--accent': '#e94560', '--accent-dark': '#903749', '--text-main': '#e3e3e3', '--text-muted': '#b8b8d1', '--card-bg': '#232946' }, member: true },
+            { name: "Aqua Dream", vars: { '--main-bg': '#e0f7fa', '--sidebar-bg': '#b2ebf2', '--accent': '#00bcd4', '--accent-dark': '#008ba3', '--text-main': '#004d40', '--text-muted': '#4dd0e1', '--card-bg': '#b2ebf2' }, member: true },
+            { name: "Sunrise Gold", vars: { '--main-bg': '#fffbe6', '--sidebar-bg': '#ffe082', '--accent': '#ffb300', '--accent-dark': '#ff8f00', '--text-main': '#6d4c41', '--text-muted': '#ffe082', '--card-bg': '#ffe082' }, member: true },
+            { name: "Emerald Mint", vars: { '--main-bg': '#e8f5e9', '--sidebar-bg': '#a5d6a7', '--accent': '#43a047', '--accent-dark': '#1b5e20', '--text-main': '#1b5e20', '--text-muted': '#a5d6a7', '--card-bg': '#a5d6a7' }, member: true }
+        ];
+        const themePresetsDiv = document.getElementById('theme-presets');
+        const themePreviewDiv = document.getElementById('theme-preview');
+        function isMember() {
+            return localStorage.getItem('isMember') === 'true' || localStorage.getItem('isGold') === 'true';
+        }
+        function isGold() {
+            return localStorage.getItem('isGold') === 'true';
+        }
+        function applyTheme(vars) {
+            for (const key in vars) {
+                document.documentElement.style.setProperty(key, vars[key]);
+            }
+        }
+        function saveTheme(vars) {
+            localStorage.setItem('themeVars', JSON.stringify(vars));
+        }
+        function loadTheme() {
+            const vars = JSON.parse(localStorage.getItem('themeVars')||'null');
+            if (vars) applyTheme(vars);
+        }
+        function renderThemePresets() {
+            themePresetsDiv.innerHTML = '';
+            themePresets.forEach((preset, idx) => {
+                const btn = document.createElement('button');
+                btn.textContent = preset.name + (preset.member ? ' 🔒' : '');
+                btn.style.background = preset.vars['--accent'];
+                btn.style.color = preset.vars['--text-main'];
+                btn.style.border = 'none';
+                btn.style.borderRadius = '8px';
+                btn.style.padding = '10px 18px';
+                btn.style.fontWeight = '600';
+                btn.style.fontSize = '1em';
+                btn.style.cursor = 'pointer';
+                btn.style.boxShadow = '0 2px 8px #0002';
+                btn.style.margin = '6px 8px 6px 0';
+                btn.onmouseenter = () => {
+                    themePreviewDiv.style.background = preset.vars['--main-bg'];
+                    themePreviewDiv.style.color = preset.vars['--text-main'];
+                    themePreviewDiv.style.borderRadius = '10px';
+                    themePreviewDiv.style.padding = '10px 0';
+                    themePreviewDiv.innerHTML = `<span style='color:${preset.vars['--accent']};font-weight:700;'>${preset.name}</span> Preview`;
+                };
+                btn.onmouseleave = () => {
+                    themePreviewDiv.innerHTML = '';
+                    themePreviewDiv.style.background = '';
+                    themePreviewDiv.style.color = '';
+                };
+                btn.onclick = () => {
+                    if (!preset.member || isMember()) {
+                        applyTheme(preset.vars);
+                        saveTheme(preset.vars);
+                    } else {
+                        // Non-member: preview for 2 seconds only
+                        const currentVars = JSON.parse(localStorage.getItem('themeVars')||'null');
+                        applyTheme(preset.vars);
+                        themePreviewDiv.innerHTML = `<span style='color:${preset.vars['--accent']};font-weight:700;'>${preset.name}</span> Preview (2s)`;
+                        setTimeout(() => {
+                            if (currentVars) {
+                                applyTheme(currentVars);
+                            } else {
+                                loadTheme();
+                            }
+                            themePreviewDiv.innerHTML = '<span style="color:var(--accent);font-size:1.1em;">Membership required for this theme.</span>';
+                        }, 2000);
+                    }
+                };
+                if (preset.member && !isMember()) {
+                    btn.title = 'Members only';
+                    btn.style.opacity = '0.7';
+                }
+                themePresetsDiv.appendChild(btn);
+            });
+        }
+        renderThemePresets();
+        loadTheme();
+    })();
+
+    // --- Membership Modal Logic ---
+    (function(){
+        const membershipBtn = document.getElementById('membership-btn');
+        const membershipModal = document.getElementById('membership-modal');
+        const membershipCodeInput = document.getElementById('membership-code-input');
+        const membershipSubmitBtn = document.getElementById('membership-submit-btn');
+        const membershipCancelBtn = document.getElementById('membership-cancel-btn');
+        const membershipError = document.getElementById('membership-error');
+        const membershipViewPlansBtn = document.getElementById('membership-view-plans-btn');
+        const MEMBER_CODE = 'jee2025';
+        membershipBtn.onclick = function() {
+            membershipModal.style.display = 'flex';
+            membershipCodeInput.value = '';
+            membershipError.textContent = '';
+            membershipCodeInput.focus();
+        };
+        membershipCancelBtn.onclick = function() {
+            membershipModal.style.display = 'none';
+        };
+        membershipSubmitBtn.onclick = function() {
+            if (membershipCodeInput.value.trim() === MEMBER_CODE) {
+                membershipBtn.textContent = 'Member ✓';
+                membershipBtn.style.background = '#7a0013';
+                membershipModal.style.display = 'none';
+                localStorage.setItem('isMember', 'true');
+                // Reload theme presets to update member-only styles
+                const themePresetsDiv = document.getElementById('theme-presets');
+                if (themePresetsDiv) {
+                    themePresetsDiv.innerHTML = '';
+                    renderThemePresets();
+                }
+            } else {
+                membershipError.textContent = 'Invalid code.';
+            }
+        };
+        if (membershipViewPlansBtn) {
+            membershipViewPlansBtn.onclick = function() {
+                window.open('membership-plans.html', '_blank');
+            };
+        }
+    })();
+
+    // Show/hide Gold features
+    function updateGoldFeatures() {
+        const goldSection = document.getElementById('gold-features');
+        const focusSection = document.getElementById('focus-mode-section');
+        const analyticsTab = document.getElementById('gold-analytics-tab');
+        const nav = document.querySelector('.sidebar-nav');
+        if (isGold()) {
+            if (goldSection) goldSection.style.display = '';
+            if (focusSection) focusSection.style.display = '';
+            if (analyticsTab) analyticsTab.style.display = 'none';
+            // Add Gold Analytics tab to sidebar if not present
+            if (nav && !document.getElementById('gold-analytics-btn')) {
+                const btn = document.createElement('button');
+                btn.className = 'nav-btn';
+                btn.id = 'gold-analytics-btn';
+                btn.dataset.tab = 'gold-analytics';
+                btn.innerHTML = '<span class="tab-heading">Gold Analytics</span>';
+                nav.appendChild(btn);
+                btn.onclick = function() {
+                    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+                    analyticsTab.classList.add('active');
+                    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                };
+            }
+        } else {
+            if (goldSection) goldSection.style.display = '';
+            if (focusSection) focusSection.style.display = 'none';
+            if (analyticsTab) analyticsTab.style.display = 'none';
+            // Remove Gold Analytics tab from sidebar if present
+            const goldBtn = document.getElementById('gold-analytics-btn');
+            if (goldBtn) goldBtn.remove();
+        }
+    }
+    updateGoldFeatures();
+    // Focus Mode logic
+    const focusBtn = document.getElementById('focus-mode-btn');
+    let focusActive = false;
+    if (focusBtn) {
+        focusBtn.onclick = function() {
+            focusActive = !focusActive;
+            document.querySelector('.athenify-navbar').style.display = focusActive ? 'none' : '';
+            document.querySelector('.sidebar-nav').style.display = focusActive ? 'none' : '';
+            document.querySelector('.main-content-area').style.maxWidth = focusActive ? '100vw' : '';
+            focusBtn.textContent = focusActive ? 'Exit Focus Mode' : 'Enter Focus Mode';
+        };
+    }
+    // Show/hide Gold features on membership change
+    window.addEventListener('storage', updateGoldFeatures);
+    });
+    </script>
+</body>
+</html>

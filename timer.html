@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Study Session Timer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css?family=Inter:400,600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --main-bg: #18181b;
+            --sidebar-bg: #1a1a1d;
+            --accent: #b3001b;
+            --accent-dark: #7a0013;
+            --text-main: #f3f3f3;
+            --text-muted: #bdbdbd;
+            --card-bg: #232326;
+        }
+        body {
+            background: var(--main-bg);
+            color: var(--text-main);
+            font-family: 'Inter', Arial, sans-serif;
+            margin: 0;
+            min-height: 100vh;
+        }
+        .athenify-navbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            background: var(--sidebar-bg);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            height: 60px;
+        }
+        .athenify-navbar .site-title {
+            font-size: 1.35em;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: 1px;
+        }
+        .athenify-navbar .top-btn {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 18px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .athenify-navbar .top-btn:hover {
+            background: var(--accent-dark);
+        }
+        .main-content-area {
+            max-width: 700px;
+            margin: 90px auto 0 auto;
+            padding: 0 16px 32px 16px;
+            text-align: initial;
+            align-items: initial;
+            background: none;
+            border: 2px solid var(--card-bg);
+            border-radius: 18px;
+            box-shadow: none;
+        }
+        h1, h2, h3 {
+            color: var(--accent);
+            font-family: 'Inter', Arial, sans-serif;
+        }
+        #single-session-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+            margin-top: 36px;
+        }
+        #single-session-timer {
+            font-size: 1.7em;
+            font-family: monospace;
+            margin-bottom: 18px;
+        }
+        .goal-btn {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 7px 16px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .goal-btn.alt { background: var(--accent-dark); }
+        .goal-btn.danger { background: #333; }
+        #totals-summary {
+            margin: 32px auto 0 auto;
+            max-width: 520px;
+            color: var(--accent);
+            font-size: 1.13em;
+            text-align: center;
+        }
+        .session-history {
+            text-align: initial;
+        }
+        #google-search-box {
+            margin: 40px auto 0 auto;
+            max-width: 520px;
+            background: #232326;
+            border-radius: 12px;
+            padding: 18px 16px;
+            text-align: initial;
+        }
+        #raw-session-data {
+            margin-left: initial;
+        }
+        @media (max-width: 900px) {
+            .main-content-area { max-width: 98vw; }
+        }
+    </style>
+</head>
+<body>
+    <div class="athenify-navbar">
+        <span class="site-title">Study Session Timer</span>
+        <a href="index.html"><button class="top-btn">Back to Dashboard</button></a>
+    </div>
+    <!-- Tab Navigation Bar -->
+    <div id="tab-bar" style="display:flex;justify-content:center;align-items:center;gap:0;background:var(--sidebar-bg);margin-top:60px;">
+        <button class="tab-btn" data-tab="planner" style="flex:1;padding:14px 0;border:none;background:var(--sidebar-bg);color:var(--text-main);font-size:1.08em;cursor:pointer;outline:none;transition:background 0.2s;">Planner</button>
+        <button class="tab-btn" data-tab="timer" style="flex:1;padding:14px 0;border:none;background:var(--sidebar-bg);color:var(--text-main);font-size:1.08em;cursor:pointer;outline:none;transition:background 0.2s;">Timer</button>
+    </div>
+    <div class="main-content-area">
+        <!-- Planner Tab Content (shortcut) -->
+        <div class="tab-content" id="tab-planner" style="display:none;align-items:center;justify-content:center;text-align:center;">
+            <h2>Planner Shortcut</h2>
+            <p>To change your study goals, important dates, or tasks, open the main Planner tab in your dashboard.</p>
+            <button id="open-main-planner-btn" class="goal-btn" style="font-size:1.08em;padding:10px 24px;margin-top:18px;">Open Planner in Dashboard</button>
+        </div>
+        <!-- Timer Tab Content (moved original content here) -->
+        <div class="tab-content" id="tab-timer">
+            <div style="display:flex;align-items:center;justify-content:center;gap:32px;margin-bottom:0;flex-wrap:wrap;">
+                <div id="timer-goal-area" style="min-width:200px;"></div>
+                <div id="timer-dates-area" style="min-width:200px;"></div>
+            </div>
+            <div id="single-session-area" style="margin-top: 18px;">
+                <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px;justify-content:center;">
+                    <input id="session-search-input" type="text" placeholder="Search subject..." style="font-size:0.98em;padding:6px 8px;border-radius:7px;width:120px;text-align:left;min-width:0;">
+                    <select id="session-title-select" style="font-size:1em;padding:7px 10px;border-radius:7px;width:180px;text-align:center;"></select>
+                </div>
+                <div id="session-title-display" style="font-size:1.08em;color:var(--accent);font-weight:600;margin-bottom:6px;display:none;"></div>
+                <div id="single-session-timer" style="font-size:1.7em;font-family:monospace;margin-bottom:18px;">00:00:00</div>
+                <button id="start-session-btn" class="goal-btn" style="font-size:1em;padding:10px 24px;">Start Session</button>
+                <button id="finish-session-btn" class="goal-btn alt" style="display:none;font-size:0.98em;padding:8px 20px;">Finish</button>
+            </div>
+            <div id="totals-summary" style="margin: 32px auto 0 auto; max-width: 520px; color: var(--accent); font-size: 1.13em; text-align: center;"></div>
+            <div class="session-history" id="session-history" style="text-align: initial;">
+                <b>Session History:</b>
+                <ul id="history-list"></ul>
+            </div>
+            <div id="google-search-box" style="margin: 40px auto 0 auto; max-width: 520px; background: #232326; border-radius: 12px; padding: 18px 16px; text-align: initial;">
+                <h3 style="color:var(--accent);margin-top:0;">Quick Google Search</h3>
+                <form id="google-search-form" style="display:flex;gap:10px;">
+                    <input id="google-search-input" type="text" placeholder="Search Google..." style="flex:1;padding:8px 12px;border-radius:6px;font-size:1.08em;background:#18181b;color:#fff;border:none;">
+                    <button class="goal-btn" style="background:var(--accent);">Search</button>
+                </form>
+                <iframe id="google-search-iframe" style="width:100%;height:340px;margin-top:14px;border-radius:8px;border:none;background:#fff;display:none;"></iframe>
+            </div>
+            <div id="raw-session-data" style="color:#bdbdbd;padding:12px 16px;margin:18px 0 0 0;font-size:0.98em;word-break:break-all;max-width:520px;overflow-x:auto;display:none;margin-left: initial;">
+                <b>Raw Session Data:</b>
+                <pre id="raw-session-data-content" style="margin:8px 0 0 0;white-space:pre-wrap;"></pre>
+            </div>
+        </div>
+        <!-- Member+ Tab Content -->
+        <div class="tab-content" id="tab-member" style="display:none;">
+            <div id="member-content"></div>
+        </div>
+    </div>
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+// --- Theme Presets Loader (from index.html) ---
+(function loadTheme() {
+    const vars = JSON.parse(localStorage.getItem('themeVars')||'null');
+    if (vars) {
+        for (const key in vars) {
+            document.documentElement.style.setProperty(key, vars[key]);
+        }
+    }
+})();
+// --- Single Forward Timer ---
+const SUBJECTS = [
+    "Mathematics","Physics","Chemistry","Biology","Computer Science","English","History","Geography","Economics","Business Studies","Accountancy","Political Science","Sociology","Psychology","Philosophy","Statistics","Environmental Science","Physical Education","Art","Music","Drama","French","German","Spanish","Hindi","Sanskrit","Civics","Electronics","Engineering Drawing","Information Technology","Web Development","Programming","Data Science","Machine Learning","Artificial Intelligence","Robotics","Astronomy","Geology","Zoology","Botany","Microbiology","Biotechnology","Genetics","Law","Media Studies","Film Studies","Photography","Design","Fashion Studies","Home Science","Commerce","Marketing","Entrepreneurship","Finance","Banking","Insurance","Hospitality","Travel & Tourism","Food Technology","Nutrition","Public Administration","Education","Library Science","Linguistics","Speech & Debate","Creative Writing","Poetry","Classical Studies","World Religions","Ethics","Logic","Anthropology","Archaeology","Oceanography","Meteorology","Forestry","Agriculture","Horticulture","Veterinary Science","Dentistry","Medicine","Nursing","Pharmacy","Physiotherapy","Occupational Therapy","Public Health","Sports Science","Aeronautics","Automobile Engineering","Civil Engineering","Mechanical Engineering","Electrical Engineering","Electronics Engineering","Chemical Engineering","Architecture","Urban Planning","Interior Design","Animation","Game Design","Graphic Design","Product Design","Theatre","Dance","Painting","Sculpture","Calligraphy","Astrophysics","Quantum Physics","Organic Chemistry","Inorganic Chemistry","Physical Chemistry"
+];
+let singleSessionInterval = null;
+let singleSessionStart = null;
+let singleSessionPausedAt = null;
+let singleSessionTotalPaused = 0;
+let lastElapsed = 0;
+function formatTime(seconds) {
+    const h = Math.floor(seconds/3600);
+    const m = Math.floor((seconds%3600)/60);
+    const s = seconds%60;
+    return `${h>0?h+':':''}${(m<10&&h>0?'0':'')+m}:${s<10?'0':''}${s}`;
+}
+function getElapsedSeconds() {
+    if (!singleSessionStart) return 0;
+    return Math.floor(((singleSessionPausedAt ? singleSessionPausedAt : Date.now()) - singleSessionStart - singleSessionTotalPaused) / 1000);
+}
+function updateSingleSessionTimer() {
+    if (!singleSessionStart) return;
+    let elapsed = getElapsedSeconds();
+    document.getElementById('single-session-timer').textContent = formatTime(elapsed);
+}
+window.addEventListener('DOMContentLoaded', function() {
+    const timerDiv = document.getElementById('single-session-timer');
+    const startBtn = document.getElementById('start-session-btn');
+    const finishBtn = document.getElementById('finish-session-btn');
+    const searchInput = document.getElementById('session-search-input');
+    const subjectSelect = document.getElementById('session-title-select');
+    const titleDisplay = document.getElementById('session-title-display');
+    // Populate subject options
+    function renderSubjectOptions(filter = "") {
+        subjectSelect.innerHTML = SUBJECTS.filter(s => s.toLowerCase().includes(filter.toLowerCase())).map(s => `<option value="${s}">${s}</option>`).join("");
+    }
+    renderSubjectOptions();
+    searchInput.addEventListener('input', function() {
+        renderSubjectOptions(searchInput.value);
+    });
+    startBtn.onclick = function() {
+        const title = subjectSelect.value;
+        if (!title) {
+            alert('Please select a subject.');
+            subjectSelect.focus();
+            return;
+        }
+        searchInput.style.display = 'none';
+        subjectSelect.style.display = 'none';
+        titleDisplay.textContent = title;
+        titleDisplay.style.display = '';
+        if (!singleSessionStart) {
+            singleSessionStart = Date.now();
+            singleSessionTotalPaused = 0;
+            singleSessionPausedAt = null;
+        } else if (singleSessionPausedAt) {
+            singleSessionTotalPaused += Date.now() - singleSessionPausedAt;
+            singleSessionPausedAt = null;
+        }                                                                                                                                                                                           
+        startBtn.style.display = 'none';
+        finishBtn.style.display = '';
+        singleSessionInterval = setInterval(updateSingleSessionTimer, 1000);
+        updateSingleSessionTimer();
+    };
+    finishBtn.onclick = function() {
+        if (singleSessionInterval) clearInterval(singleSessionInterval);
+        singleSessionInterval = null;
+        let elapsed = Math.floor(((singleSessionPausedAt ? singleSessionPausedAt : Date.now()) - singleSessionStart - singleSessionTotalPaused) / 1000);
+        const title = titleDisplay.textContent || 'Untitled'; // Removed titleInput reference
+        // Save to session history with title
+        let sessionHistory = JSON.parse(localStorage.getItem('singleSessionHistory')||'[]');
+        sessionHistory.unshift({title, duration: elapsed});
+        localStorage.setItem('singleSessionHistory', JSON.stringify(sessionHistory));
+        renderSingleSessionHistory();
+        alert(`Session complete! You studied for ${formatTime(elapsed)}.`);
+        timerDiv.textContent = '00:00:00';
+        startBtn.style.display = '';
+        finishBtn.style.display = 'none';
+        singleSessionStart = null;
+        singleSessionPausedAt = null;
+        singleSessionTotalPaused = 0;
+        searchInput.style.display = '';
+        subjectSelect.style.display = '';
+        titleDisplay.style.display = 'none';
+        subjectSelect.selectedIndex = 0; // Reset to first option
+    };
+    // Render history on load
+    renderSingleSessionHistory();
+});
+window.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'visible' && singleSessionStart) {
+        updateSingleSessionTimer();
+    }
+});
+function renderSingleSessionHistory() {
+    let sessionHistory = JSON.parse(localStorage.getItem('singleSessionHistory')||'[]');
+    const historyList = document.getElementById('history-list');
+    historyList.innerHTML = sessionHistory.length ? sessionHistory.map(s => `<li><b>${s.title}</b> - ${formatTime(s.duration)}</li>`).join('') : '<li style="color:var(--text-muted);">No sessions yet.</li>';
+    // Show raw session data in a pretty JSON format
+    let rawDiv = document.getElementById('raw-session-data');
+    if (!rawDiv) {
+        rawDiv = document.createElement('div');
+        rawDiv.id = 'raw-session-data';
+        rawDiv.style = 'color:#bdbdbd;padding:12px 16px;margin:18px 0 0 0;font-size:0.98em;word-break:break-all;max-width:520px;overflow-x:auto;';
+        historyList.parentElement.appendChild(rawDiv);
+    }
+    if (sessionHistory.length) {
+        rawDiv.innerHTML = '<b>Raw Session Data:</b><pre style="margin:8px 0 0 0;white-space:pre-wrap;">' + JSON.stringify(sessionHistory, null, 2) + '</pre>';
+    } else {
+        rawDiv.innerHTML = '';
+    }
+}
+// Google Search logic
+const googleForm = document.getElementById('google-search-form');
+const googleInput = document.getElementById('google-search-input');
+const googleIframe = document.getElementById('google-search-iframe');
+googleForm.onsubmit = function(e) {
+    e.preventDefault();
+    const q = encodeURIComponent(googleInput.value.trim());
+    if(q) {
+        googleIframe.style.display = 'block';
+        googleIframe.src = `https://www.google.com/search?q=${q}&igu=1`;
+    }
+};
+// Timer: Show upcoming important dates
+function renderTimerDates() {
+    const timerDatesDiv = document.getElementById('timer-dates-area');
+    if (!timerDatesDiv) return;
+    let calendarDates = [];
+    try { calendarDates = JSON.parse(localStorage.getItem('calendarDates')||'[]'); } catch {}
+    if (calendarDates.length === 0) {
+        timerDatesDiv.innerHTML = '';
+        return;
+    }
+    calendarDates.sort((a,b)=>a.date.localeCompare(b.date));
+    const now = new Date();
+    const today = now.toISOString().slice(0,10);
+    const upcoming = calendarDates.filter(d => d.date >= today);
+    if (upcoming.length === 0) {
+        timerDatesDiv.innerHTML = '';
+        return;
+    }
+    // Show only the next upcoming date
+    const next = upcoming[0];
+    const target = new Date(next.date + 'T00:00:00');
+    let diff = Math.max(0, target - now);
+    const days = Math.floor(diff/(1000*60*60*24));
+    diff -= days*1000*60*60*24;
+    const hours = Math.floor(diff/(1000*60*60));
+    diff -= hours*1000*60*60;
+    const mins = Math.floor(diff/(1000*60));
+    timerDatesDiv.innerHTML = `<div style='padding:6px 14px;font-size:0.97em;color:var(--accent);display:inline-block;min-width:180px;text-align:center;'>📅 <b>${next.title}</b><br>${next.date}<br><span style='color:var(--text-main);font-size:0.97em;'>in ${days}d ${hours}h ${mins}m</span></div>`;
+}
+renderTimerDates();
+setInterval(renderTimerDates, 60000);
+// Timer: Show study goal
+function renderTimerGoal() {
+    const timerGoalDiv = document.getElementById('timer-goal-area');
+    if (!timerGoalDiv) return;
+    let goal = null;
+    try { goal = JSON.parse(localStorage.getItem('studyGoal')||'null'); } catch {}
+    if (!goal) {
+        timerGoalDiv.innerHTML = '';
+        return;
+    }
+    // Calculate time left
+    const now = new Date();
+    const target = new Date(goal.date + 'T23:59:59');
+    let diff = Math.max(0, target - now);
+    const days = Math.floor(diff/(1000*60*60*24));
+    diff -= days*1000*60*60*24;
+    const hours = Math.floor(diff/(1000*60*60));
+    diff -= hours*1000*60*60;
+    const mins = Math.floor(diff/(1000*60));
+    // Calculate total study time so far
+    let sessionHistory = [];
+    try { sessionHistory = JSON.parse(localStorage.getItem('singleSessionHistory')||'[]'); } catch {}
+    const totalSeconds = sessionHistory.reduce((sum, s) => sum + (s.duration||0), 0);
+    const totalHours = Math.floor(totalSeconds/3600);
+    const totalMins = Math.floor((totalSeconds%3600)/60);
+    // Remaining hours
+    const remaining = Math.max(0, goal.hours - (totalSeconds/3600));
+    timerGoalDiv.innerHTML = `<div style='padding:6px 14px;font-size:0.97em;color:var(--accent);display:inline-block;min-width:180px;text-align:center;margin-right:10px;'>🎯 <b>Goal:</b> ${goal.hours}h by ${goal.date}<br><span style='color:var(--text-main);font-size:0.97em;'>Done: ${totalHours}h ${totalMins}m<br>Left: ${remaining.toFixed(1)}h<br>Time left: ${days}d ${hours}h ${mins}m</span></div>`;
+}
+renderTimerGoal();
+setInterval(renderTimerGoal, 60000);
+// Tab switching logic
+(function() {
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+    // Add Member+ tab button if not present
+    if (!document.querySelector('.tab-btn[data-tab="member"]')) {
+        const memberBtn = document.createElement('button');
+        memberBtn.className = 'tab-btn';
+        memberBtn.dataset.tab = 'member';
+        memberBtn.textContent = 'Member+';
+        document.getElementById('tab-bar').appendChild(memberBtn);
+        memberBtn.addEventListener('click', () => showTab('member'));
+    }
+    function isMember() {
+        return localStorage.getItem('isMember') === 'true' || localStorage.getItem('isGold') === 'true';
+    }
+    function showTab(tab) {
+        tabContents.forEach(div => div.style.display = 'none');
+        document.getElementById('tab-' + tab).style.display = '';
+        tabBtns.forEach(btn => btn.style.background = 'var(--sidebar-bg)');
+        const activeBtn = Array.from(tabBtns).find(btn => btn.dataset.tab === tab);
+        if (activeBtn) activeBtn.style.background = 'var(--card-bg)';
+        // Planner shortcut logic remains
+        if (tab === 'planner') {
+            window.open('index.html#planner', '_blank');
+            setTimeout(() => showTab('timer'), 100);
+        }
+        // Member+ tab content
+        if (tab === 'member') {
+            renderMemberTab();
+        }
+    }
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => showTab(btn.dataset.tab));
+    });
+    // Show Timer tab by default
+    showTab('timer');
+    // Planner shortcut button logic remains
+    const plannerBtn = document.getElementById('open-main-planner-btn');
+    if (plannerBtn) {
+        plannerBtn.onclick = function() {
+            window.open('index.html#planner', '_blank');
+        };
+    }
+    // Member+ tab content logic
+    function renderMemberTab() {
+        const container = document.getElementById('member-content');
+        if (!isMember()) {
+            container.innerHTML = `<div style='text-align:center;padding:40px 0;'><div style='font-size:2.5em;color:var(--accent);margin-bottom:12px;'>&#128274;</div><h2 style='color:var(--accent);margin-bottom:10px;'>Members Only</h2><p style='color:var(--text-main);font-size:1.15em;margin-bottom:18px;'>Unlock Productivity Insights, Achievements, Export, and more!<br><br><a href='membership-plans.html' target='_blank' style='color:var(--accent);font-weight:700;text-decoration:underline;'>View Membership Plans</a></p></div>`;
+            return;
+        }
+        // Productivity Insights (charts placeholder)
+        let sessionHistory = JSON.parse(localStorage.getItem('singleSessionHistory')||'[]');
+        let totalHours = sessionHistory.reduce((sum, s) => sum + (s.duration||0), 0) / 3600;
+        let bestDay = '';
+        let streak = 0, maxStreak = 0, lastDate = null;
+        let days = {};
+        sessionHistory.forEach(s => {
+            let d = new Date(Date.now() - (s.duration||0)*1000).toISOString().slice(0,10);
+            days[d] = (days[d]||0) + (s.duration||0);
+        });
+        let sortedDays = Object.entries(days).sort((a,b)=>b[1]-a[1]);
+        if (sortedDays.length) bestDay = sortedDays[0][0];
+        // Streak calculation
+        let dates = Object.keys(days).sort();
+        for (let i=0; i<dates.length; ++i) {
+            if (i===0 || (new Date(dates[i])-new Date(dates[i-1])===86400000)) {
+                streak++;
+            } else {
+                streak=1;
+            }
+            if (streak>maxStreak) maxStreak=streak;
+        }
+        // Content for Member+ tab (placeholder)
+        container.innerHTML = `<h2 style='color:var(--accent);'>Productivity Insights</h2>
+        <div style='margin:18px 0;'><b style='color:var(--accent);'>Total Study Time:</b> ${totalHours.toFixed(1)} hours</div>
+        <div style='margin:18px 0;'><b style='color:var(--accent);'>Best Study Day:</b> ${bestDay}</div>
+        <div style='margin:18px 0;'><b style='color:var(--accent);'>Current Streak:</b> ${maxStreak} days</div>
+        <div style='margin:18px 0;color:var(--text-muted);font-size:0.9em;'>* Insights are based on your session history.</div>`;
+    }
+})(); // Close the IIFE for tab logic
+}); // Close DOMContentLoaded handler
+</script>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Membership Plans</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css?family=Inter:400,600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #18181b 60%, #b3001b 100%);
+            color: #f3f3f3;
+            font-family: 'Inter', Arial, sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        .plans-header {
+            margin-top: 48px;
+            text-align: center;
+        }
+        .plans-header h1 {
+            font-size: 2.5em;
+            color: #b3001b;
+            margin-bottom: 0.2em;
+        }
+        .plans-header p {
+            color: #bdbdbd;
+            font-size: 1.2em;
+            margin-bottom: 2em;
+        }
+        .plans-container {
+            display: flex;
+            gap: 36px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 48px;
+        }
+        .plan-box {
+            background: #232326;
+            border-radius: 18px;
+            box-shadow: 0 4px 32px #b3001b33;
+            padding: 36px 32px 32px 32px;
+            min-width: 280px;
+            max-width: 340px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .plan-box.gold {
+            border: 3px solid gold;
+            background: linear-gradient(135deg, #232326 80%, #ffd700 100%);
+            box-shadow: 0 8px 40px #ffd70055;
+            transform: scale(1.05);
+        }
+        .plan-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 0.5em;
+            letter-spacing: 1px;
+        }
+        .plan-title.gold {
+            color: #ffd700;
+            text-shadow: 0 2px 8px #b3001b55;
+        }
+        .plan-price {
+            font-size: 2.2em;
+            font-weight: 800;
+            margin-bottom: 0.3em;
+        }
+        .plan-price.gold {
+            color: #ffd700;
+            text-shadow: 0 2px 8px #b3001b55;
+        }
+        .plan-features {
+            margin: 18px 0 24px 0;
+            text-align: left;
+            color: #f3f3f3;
+            font-size: 1.08em;
+        }
+        .plan-features li {
+            margin-bottom: 8px;
+            list-style: none;
+            position: relative;
+            padding-left: 22px;
+        }
+        .plan-features li:before {
+            content: '✔';
+            color: #b3001b;
+            position: absolute;
+            left: 0;
+            font-size: 1.1em;
+        }
+        .plan-features.gold li:before {
+            color: #ffd700;
+        }
+        .plan-action {
+            margin-top: 18px;
+            width: 100%;
+        }
+        .plan-action button {
+            width: 100%;
+            padding: 12px 0;
+            font-size: 1.15em;
+            font-weight: 700;
+            border: none;
+            border-radius: 8px;
+            background: #b3001b;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+        .plan-box.gold .plan-action button {
+            background: linear-gradient(90deg, #ffd700 60%, #b3001b 100%);
+            color: #232326;
+            box-shadow: 0 2px 12px #ffd70055;
+        }
+        .plan-action button:hover {
+            background: #7a0013;
+            color: #fff;
+            transform: scale(1.04);
+        }
+        .plan-box.gold .plan-action button:hover {
+            background: #ffd700;
+            color: #b3001b;
+        }
+        @media (max-width: 900px) {
+            .plans-container { flex-direction: column; gap: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="plans-header">
+        <h1>Unlock Your Full Potential</h1>
+        <p>Choose the membership that fits your study journey. Invest in yourself and access exclusive features!</p>
+    </div>
+    <div class="plans-container">
+        <div class="plan-box">
+            <div class="plan-title">Student Membership</div>
+            <div class="plan-price">$20</div>
+            <ul class="plan-features">
+                <li>Access to all preset membership themes</li>
+                <li>Priority support</li>
+                <li>Perfect for focused learners</li>
+            </ul>
+            <div class="plan-action">
+                <button onclick="alert('Student Membership purchase coming soon!')">Get Student Membership</button>
+            </div>
+        </div>
+        <div class="plan-box gold">
+            <div class="plan-title gold">Gold Membership</div>
+            <div class="plan-price gold">$100</div>
+            <ul class="plan-features gold">
+                <li>Unlocks all premium themes</li>
+                <li>Access to Analytics & advanced features</li>
+                <li>All Student Membership benefits</li>
+                <li>Early access to new tools</li>
+                <li>VIP support</li>
+            </ul>
+            <div class="plan-action">
+                <button onclick="alert('Gold Membership purchase coming soon!')">Get Gold Membership</button>
+            </div>
+            <div style="position:absolute;top:-18px;right:-18px;background:#ffd700;color:#232326;font-weight:800;padding:8px 18px;border-radius:12px;box-shadow:0 2px 12px #b3001b33;font-size:1.1em;letter-spacing:1px;">Most Popular</div>
+        </div>
+    </div>
+    <div style="text-align:center;color:#bdbdbd;font-size:1.08em;margin-bottom:32px;">
+        <p>Invest in your success. <b>Gold Membership</b> is for those who want it all.<br>Ready to level up?</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Planned Project Timer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="project-session-list" style="margin:32px 0 0 32px;"></div>
+    <div id="project-subject"></div>
+    <div id="timer"></div>
+    <div id="time-left"></div>
+    <div id="progress-bar-container">
+        <div id="progress-bar"></div>
+    </div>
+    <!-- Advanced Formula Search Engine -->
+    <div id="formula-search-engine" style="margin: 24px 0 24px 32px; max-width: 400px;">
+        <input type="text" id="quick-formula-search" placeholder="Search any formula, topic, or tip..." style="width: 70%; padding: 8px; border-radius: 6px; border: 1px solid #b0c4de;">
+        <button id="quick-formula-btn" class="goal-btn" style="margin-left:8px;">Search Formula</button>
+        <div id="quick-formula-results" style="background:#f1f8ff; border-radius:8px; margin-top:10px; padding:10px 14px; max-height:180px; overflow-y:auto; display:none;"></div>
+    </div>
+    <div id="dopamine-blocker" style="margin: 0 0 24px 32px;">
+        <button id="block-dopamine-btn" class="clear-btn">Block Dopamine Content</button>
+        <span id="block-status" style="margin-left:10px; color:#2d3a4b;"></span>
+    </div>
+    <div id="timer-controls" style="display:none;">
+        <button id="start-timer">Start</button>
+        <button id="stop-timer">Stop</button>
+        <button id="break-btn">Take a Break</button>
+        <button id="complete-btn">Mark as Complete</button>
+        <button onclick="window.location.href='index.html'" class="top-btn">Back to Home</button>
+    </div>
+    <div id="timer-status"></div>
+    <div id="motivation-quote"></div>
+    <div class="main-content-area">
+        <h1>Timer Area</h1>
+        <div style="max-width:400px;margin:0 auto;background:#f8fbff;border-radius:14px;box-shadow:0 2px 8px #b0c4de33;padding:32px 24px 24px 24px;">
+            <div id="page-timer-display" style="font-size:2.2em;color:#388e3c;font-weight:600;margin-bottom:12px;">00:00:00</div>
+            <div style="display:flex; gap:10px; margin-bottom:10px;">
+                <button id="page-timer-start" class="goal-btn" style="background:#4dd0e1;color:#fff;">Start</button>
+                <button id="page-timer-pause" class="goal-btn" style="background:#b2dfdb;color:#388e3c;display:none;">Pause</button>
+                <button id="page-timer-resume" class="goal-btn" style="background:#81c784;color:#fff;display:none;">Resume</button>
+                <button id="page-timer-stop" class="goal-btn" style="background:#e57373;color:#fff;display:none;">Stop</button>
+            </div>
+            <div id="page-timer-status" style="margin-top:10px;color:#00796b;font-size:1.05em;"></div>
+        </div>
+    </div>
+    <script>
+        // Load all sessions from localStorage
+        let sessions = [];
+        try {
+            sessions = JSON.parse(localStorage.getItem('sessions')) || [];
+        } catch { sessions = []; }
+
+        // Show session selection if more than one session
+        const sessionListDiv = document.getElementById('project-session-list');
+        const subjectDiv = document.getElementById('project-subject');
+        const timerControls = document.getElementById('timer-controls');
+        const progressBar = document.getElementById('progress-bar');
+        let selectedSession = null;
+        let completedSessions = JSON.parse(localStorage.getItem('completedSessions') || "[]");
+
+        function renderSessionList() {
+            sessionListDiv.innerHTML = '';
+            if (!sessions.length) {
+                sessionListDiv.innerHTML = "<b>No sessions found. Please add a session first.</b>";
+                timerControls.style.display = "none";
+                subjectDiv.textContent = '';
+                document.getElementById('timer').textContent = '';
+                document.getElementById('time-left').textContent = '';
+                progressBar.style.width = "0%";
+                return;
+            }
+            sessionListDiv.innerHTML = "<b>Select a session to start:</b><br><br>";
+            sessions.forEach((s, i) => {
+                const btn = document.createElement('button');
+                btn.textContent = `${s.subject} (${s.hours}h)`;
+                btn.className = "goal-btn";
+                btn.style.marginRight = "10px";
+                if (completedSessions.some(cs => cs.subject === s.subject && cs.hours === s.hours)) {
+                    btn.disabled = true;
+                    btn.style.opacity = 0.5;
+                    btn.textContent += " ✔️";
+                }
+                btn.onclick = () => selectSession(i);
+                sessionListDiv.appendChild(btn);
+            });
+        }
+
+        function selectSession(idx) {
+            selectedSession = sessions[idx];
+            subjectDiv.textContent = selectedSession.subject;
+            timerControls.style.display = "flex";
+            seconds = 0;
+            plannedMinutes = Math.round(Number(selectedSession.hours) * 60);
+            updateTimer();
+            updateProgressBar();
+            document.getElementById('timer-status').textContent = '';
+            showMotivation();
+        }
+
+        // Timer logic
+        let timerInterval, seconds = 0, plannedMinutes = 0, breakActive = false;
+        const timerDiv = document.getElementById('timer');
+        const timeLeftDiv = document.getElementById('time-left');
+        const statusDiv = document.getElementById('timer-status');
+        function updateTimer() {
+            if (!selectedSession) {
+                timerDiv.textContent = '';
+                timeLeftDiv.textContent = '';
+                return;
+            }
+            let h = String(Math.floor(seconds/3600)).padStart(2,'0');
+            let m = String(Math.floor((seconds%3600)/60)).padStart(2,'0');
+            let s = String(seconds%60).padStart(2,'0');
+            timerDiv.textContent = `${h}:${m}:${s}`;
+            let left = plannedMinutes*60 - seconds;
+            if (left < 0) left = 0;
+            let lh = String(Math.floor(left/3600)).padStart(2,'0');
+            let lm = String(Math.floor((left%3600)/60)).padStart(2,'0');
+            let ls = String(left%60).padStart(2,'0');
+            timeLeftDiv.textContent = `Time Left: ${lh}:${lm}:${ls} (of ${plannedMinutes} min)`;
+            updateProgressBar();
+        }
+        function updateProgressBar() {
+            if (!selectedSession) {
+                progressBar.style.width = "0%";
+                return;
+            }
+            let percent = Math.min(100, (seconds / (plannedMinutes*60)) * 100);
+            progressBar.style.width = percent + "%";
+        }
+        document.getElementById('start-timer').onclick = function() {
+            if (!selectedSession || timerInterval || breakActive) return;
+            statusDiv.textContent = "Timer started!";
+            timerInterval = setInterval(() => {
+                seconds++;
+                updateTimer();
+                if (seconds >= plannedMinutes*60) {
+                    statusDiv.textContent = "⏰ Planned time is up!";
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    showMotivation(true);
+                }
+            }, 1000);
+        };
+        document.getElementById('stop-timer').onclick = function() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                statusDiv.textContent = "Timer stopped at " + timerDiv.textContent;
+            }
+        };
+        document.getElementById('break-btn').onclick = function() {
+            if (!selectedSession || breakActive) return;
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            breakActive = true;
+            statusDiv.textContent = "Break started! Timer paused.";
+            let breakSeconds = 0;
+            let breakInterval = setInterval(() => {
+                breakSeconds++;
+                statusDiv.textContent = `Break time: ${Math.floor(breakSeconds/60)}:${String(breakSeconds%60).padStart(2,'0')}`;
+            }, 1000);
+            setTimeout(() => {
+                clearInterval(breakInterval);
+                breakActive = false;
+                statusDiv.textContent = "Break ended. Resume when ready.";
+            }, 5*60*1000); // 5 minute break
+        };
+        document.getElementById('complete-btn').onclick = function() {
+            if (!selectedSession) return;
+            completedSessions.push(selectedSession);
+            localStorage.setItem('completedSessions', JSON.stringify(completedSessions));
+            statusDiv.textContent = "Session marked as complete! 🎉";
+            renderSessionList();
+            timerControls.style.display = "none";
+            subjectDiv.textContent = '';
+            timerDiv.textContent = '';
+            timeLeftDiv.textContent = '';
+            progressBar.style.width = "0%";
+            showMotivation(true);
+        };
+
+        // Motivational quotes
+        const quotes = [
+            "Great job! Every step counts.",
+            "Keep going, you're doing amazing!",
+            "Success is the sum of small efforts repeated.",
+            "Stay focused and never give up!",
+            "You are closer to your goals than you think.",
+            "Believe in yourself and all that you are.",
+            "Small progress is still progress.",
+            "Discipline is the bridge between goals and accomplishment.",
+            "Push yourself, because no one else is going to do it for you.",
+            "Dream big, work hard, stay focused."
+        ];
+        function showMotivation(finish = false) {
+            const quoteDiv = document.getElementById('motivation-quote');
+            let quote = quotes[Math.floor(Math.random() * quotes.length)];
+            quoteDiv.textContent = finish ? "🎉 " + quote : quote;
+            quoteDiv.style.margin = "24px 0 0 32px";
+            quoteDiv.style.fontSize = "1.1em";
+            quoteDiv.style.color = "#4f8edc";
+        }
+
+        // Dopamine Blocker Feature
+        const dopamineSites = [
+            "youtube.com/shorts",
+            "tiktok.com",
+            "instagram.com/reels",
+            "facebook.com/reel",
+            "twitter.com/explore",
+            "reddit.com/r/popular"
+        ];
+        const blockBtn = document.getElementById('block-dopamine-btn');
+        const blockStatus = document.getElementById('block-status');
+        let blockActive = false;
+
+        blockBtn.onclick = function() {
+            if (!blockActive) {
+                blockActive = true;
+                blockStatus.textContent = "Blocker ON (see instructions)";
+                blockBtn.textContent = "Unblock Dopamine Content";
+                alert(
+                    "To block dopamine/shorts content, please add the following sites to your browser's block/extension list:\n\n" +
+                    dopamineSites.map(s => "- " + s).join("\n") +
+                    "\n\nYou can use browser extensions like 'BlockSite', 'StayFocusd', or 'LeechBlock' to block these URLs while you study."
+                );
+            } else {
+                blockActive = false;
+                blockStatus.textContent = "Blocker OFF";
+                blockBtn.textContent = "Block Dopamine Content";
+            }
+        };
+
+        renderSessionList();
+        // Optionally auto-select the last session if only one
+        if (sessions.length === 1) selectSession(0);
+
+        // --- Formula Data (sync with formulas.html, sample only) ---
+        const formulaData = [
+            {subject:"Physics", chapter:"Kinematics", formula:"v = u + at"},
+            {subject:"Physics", chapter:"Kinematics", formula:"s = ut + (1/2)at²"},
+            {subject:"Physics", chapter:"Kinematics", formula:"v² = u² + 2as"},
+            {subject:"Physics", chapter:"Kinematics", formula:"Projectile range: R = (u² sin2θ)/g"},
+            {subject:"Physics", chapter:"Work, Power & Energy", formula:"Work: W = F·d·cosθ"},
+            {subject:"Physics", chapter:"Electrostatics", formula:"Coulomb's Law: F = k·q₁q₂/r²"},
+            {subject:"Chemistry", chapter:"Mole Concept", formula:"Number of moles = Given mass / Molar mass"},
+            {subject:"Mathematics", chapter:"Quadratic Equations", formula:"Roots: x = [-b ± √(b²-4ac)] / 2a"},
+            {subject:"Mathematics", chapter:"Trigonometry", formula:"sin²θ + cos²θ = 1"},
+            // ...add more or sync with formulas.html for full coverage...
+        ];
+
+        // Advanced Formula Search Engine Logic
+        const quickInput = document.getElementById('quick-formula-search');
+        const quickBtn = document.getElementById('quick-formula-btn');
+        const quickResults = document.getElementById('quick-formula-results');
+
+        function showFormulaResults(query) {
+            const q = query.trim().toLowerCase();
+            if (!q) {
+                quickResults.style.display = "none";
+                quickResults.innerHTML = "";
+                return;
+            }
+            const matches = formulaData.filter(f =>
+                f.formula.toLowerCase().includes(q) ||
+                f.chapter.toLowerCase().includes(q) ||
+                f.subject.toLowerCase().includes(q)
+            );
+            if (!matches.length) {
+                quickResults.innerHTML = "<em>No formula found for your search.</em>";
+            } else {
+                quickResults.innerHTML = matches.map(f =>
+                    `<div style="margin-bottom:8px;">
+                        <b>${f.subject} - ${f.chapter}</b>:<br>
+                        ${f.formula}
+                        <button class="copy-btn" style="margin-left:8px;" onclick="navigator.clipboard.writeText('${f.formula.replace(/'/g,"\\'")}')">Copy</button>
+                    </div>`
+                ).join("");
+            }
+            quickResults.style.display = "block";
+        }
+
+        quickBtn.onclick = function() {
+            showFormulaResults(quickInput.value);
+        };
+        quickInput.oninput = function() {
+            if (quickInput.value.trim().length >= 2) {
+                showFormulaResults(quickInput.value);
+            } else {
+                quickResults.style.display = "none";
+            }
+        };
+
+        // --- New Timer Page Logic ---
+        let pageTimerInterval, pageSeconds = 0;
+        const pageTimerDisplay = document.getElementById('page-timer-display');
+        const pageStatusDiv = document.getElementById('page-timer-status');
+
+        function updatePageTimer() {
+            let h = String(Math.floor(pageSeconds/3600)).padStart(2,'0');
+            let m = String(Math.floor((pageSeconds%3600)/60)).padStart(2,'0');
+            let s = String(pageSeconds%60).padStart(2,'0');
+            pageTimerDisplay.textContent = `${h}:${m}:${s}`;
+        }
+
+        document.getElementById('page-timer-start').onclick = function() {
+            pageStatusDiv.textContent = "Timer started!";
+            this.style.display = "none";
+            document.getElementById('page-timer-pause').style.display = "inline-block";
+            document.getElementById('page-timer-stop').style.display = "inline-block";
+            pageTimerInterval = setInterval(() => {
+                pageSeconds++;
+                updatePageTimer();
+            }, 1000);
+        };
+        document.getElementById('page-timer-pause').onclick = function() {
+            clearInterval(pageTimerInterval);
+            pageTimerInterval = null;
+            pageStatusDiv.textContent = "Timer paused.";
+            this.style.display = "none";
+            document.getElementById('page-timer-resume').style.display = "inline-block";
+        };
+        document.getElementById('page-timer-resume').onclick = function() {
+            pageStatusDiv.textContent = "Timer resumed!";
+            this.style.display = "none";
+            document.getElementById('page-timer-pause').style.display = "inline-block";
+            document.getElementById('page-timer-stop').style.display = "inline-block";
+            pageTimerInterval = setInterval(() => {
+                pageSeconds++;
+                updatePageTimer();
+            }, 1000);
+        };
+        document.getElementById('page-timer-stop').onclick = function() {
+            clearInterval(pageTimerInterval);
+            pageTimerInterval = null;
+            pageStatusDiv.textContent = "Timer stopped at " + pageTimerDisplay.textContent;
+            document.getElementById('page-timer-start').style.display = "inline-block";
+            this.style.display = "none";
+            document.getElementById('page-timer-pause').style.display = "none";
+            document.getElementById('page-timer-resume').style.display = "none";
+        };
+
+    </script>
+</body>
+</html>
